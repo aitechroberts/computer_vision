@@ -54,7 +54,7 @@ def t3(X):
     2) X[S] = v assigns the value v to all entires of X corresponding to
        true values of S.
     """
-    return None
+    return np.where(X < 0, 0, X)
 
 
 def t4(R, X):
@@ -73,8 +73,22 @@ def t4(R, X):
     1) If v is a vector, then the matrix-vector product Rv rotates the vector
        by the matrix R.
     2) .T gives the transpose of a matrix
+
+    Why use R.T instead of R? 
+        Rotation matrices are typically orthogonal, meaning that to rotate vectors, 
+        you should multiply by the transpose of the rotation matrix
+
+    This correctly applies the rotation to each row vector in X (vector-matrix multiplication)
+
+    Rotation matrices typically assume column vectors when they are defined mathematically. 
+    However, in numerical programming, row vectors (each row being a vector) are often used,
+    requiring a transpose operation for correct application.
+
+    So in matrix multiplication, if you were to do nothing, you'd be applying stuff row-wise, but by transposing
+    you apply the second matrix to the first matrix column wise, thus achieving the desired transformation
+
     """
-    return None
+    return X @ R.T
 
 
 def t5(X):
@@ -94,7 +108,7 @@ def t5(X):
        from rows y0 to (but not including!) y1
        from columns x0 (but not including!) x1
     """
-    return None
+    return X[:4, :4] - X[-4:,-4:]
 
 
 def t6(N):
@@ -109,7 +123,12 @@ def t6(N):
     Par: 6 lines
     Instructor: 3 lines
     """
-    return None
+    a = np.ones((N, N), dtype=int)  # Create an NxN matrix filled with 1s
+    a[:5, :] = 0  # Set the first 5 rows to 0
+    a[-5:, :] = 0  # Set the last 5 rows to 0
+    a[:, :5] = 0  # Set the first 5 columns to 0
+    a[:, -5:] = 0  # Set the last 5 columns to 0
+    return a
 
 
 def t7(X):
@@ -132,8 +151,14 @@ def t7(X):
        shape (N, 1) work -- try it! This is called "broadcasting"
     4) Elementwise operations between an array of shape (N, M) and an array of
        shape (N,) won't work -- try reshaping
+    
+    The row magnitudes would be the L2 norm. So executing the solution from the
+    last of the warmups, storing them in an (N,1) array and then dividing X by
+    that array would work, but np.linalg.norm already executes this.
+
+    np.linalg.norm(axis =1, keepdims=True) executes row-wise and keeps as a 2D array
     """
-    return None
+    return X / np.linalg.norm(X, axis=1, keepdims=True)
 
 
 def t8(X):
@@ -153,7 +178,9 @@ def t8(X):
     2) Normalize the rows individually
     3) You may have to reshape
     """
-    return None
+    row_mean = X.mean(axis=1, keepdims=True)
+    row_std = X.std(axis=1, keepdims=True)
+    return (X - row_mean) / row_std
 
 
 def t9(q, k, v):
