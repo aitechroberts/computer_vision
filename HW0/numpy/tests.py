@@ -34,7 +34,16 @@ def t2(X):
     2) np.argmin
     3) Watch rows and columns!
     """
-    return None
+    
+    eig_vals, eig_vecs = np.linalg.eig(X) # returns an Eig object of ([eigenvalues], [eigenvectors])
+    eig_val_min = np.argmin(eig_vals) # selects the INDEX of the smallest argument in the 1D array of Eigenvalues
+    '''
+    Eigenvectors is an (N,N) matrix where each column (,n) is an eigenvector rather than the rows
+    eig_vecs[eig_val_min] returns the row which is incorrect while eig_vecs[: , eig_val_min] returns the column
+    '''
+
+    # Use the index of the minimum to return the corresponding eigenvector
+    return eig_vecs[: ,eig_val_min]
 
 
 def t3(X):
@@ -123,7 +132,7 @@ def t6(N):
     Par: 6 lines
     Instructor: 3 lines
     """
-    a = np.ones((N, N), dtype=int)  # Create an NxN matrix filled with 1s
+    a = np.ones((N, N))  # Create an NxN matrix filled with 1s
     a[:5, :] = 0  # Set the first 5 rows to 0
     a[-5:, :] = 0  # Set the last 5 rows to 0
     a[:, :5] = 0  # Set the first 5 columns to 0
@@ -290,7 +299,7 @@ def t12(X, Y):
     Hints: Similar to previous problem
     """
     X_squared = np.sum(X**2, axis=1, keepdims=True)
-    Y_squared = np.sum(Y**2, axis=1, keepdims=True)
+    Y_squared = np.sum(Y**2, axis=1, keepdims=True).T
     return np.sqrt(np.maximum(X_squared + Y_squared - 2 * X @ Y.T, 0))
 
 
@@ -315,7 +324,7 @@ def t13(q, V):
         And we need (N,1) so do it like below
         where (N,M) * (M, 1)
     """
-    return np.argmax(V @ q.t)
+    return np.argmax(V @ q.T)
 
 
 def t14(X, y):
