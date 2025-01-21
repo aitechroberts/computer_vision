@@ -26,3 +26,4 @@ Normalized cross-correlation is a little bit more invariant to illumination and 
 
 Filtering is really a naive dot product between the filter and the image
 
+How to intuitively think of filters
