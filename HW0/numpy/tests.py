@@ -201,8 +201,13 @@ def t9(q, k, v):
        (1, K) with broadcasting
     2) Recall that np.sum has useful "axis" and "keepdims" options
     3) np.exp and friends apply elementwise to arrays
+
+    *** First conduct the sums of the Euclidean distances followed by
+    exponent of the negative of the distances sums, THEN the sum of that * V
     """
-    return None
+
+    dist_sum = np.sum((q-k)**2, axis=1, keepdims=True)
+    return np.sum(np.exp(-dist_sum)*v)
 
 
 def t10(Xs):
@@ -226,7 +231,14 @@ def t10(Xs):
     5) Our 3-line solution uses no loops, and uses the algebraic trick from the
        next problem.
     """
-    return None
+    # Compute the centroid aka mean of rows
+    ''' Killer way to execute this is using what I'm calling an array comprehension
+            Basically a list comprehension inside np.array instantion'''
+    centroids_of_arrays = np.array([np.mean(X, axis=0) for X in Xs]) # row-wise centroids aka means
+    # Use equations below
+    dist_of_centroids = np.sum(centroids_of_arrays**2, axis=1, keepdims=True)
+    Distance_squared = dist_of_centroids + dist_of_centroids.T - 2 * centroids_of_arrays @ centroids_of_arrays.T
+    return np.sqrt(np.maximum(Distance_squared, 0))
 
 
 def t11(X):
@@ -237,7 +249,11 @@ def t11(X):
     Returns:
     A numpy array D of shape (N, N) where D[i, j] gives the Euclidean distance
     between X[i] and X[j], using the identity
-    ||x - y||^2 = ||x||^2 + ||y||^2 - 2x^T y
+    ||x - y||^2 = is the distance squared so square root that
+    
+    ||x||^2 + ||y||^2 - 2x^T y is what to focus on
+
+    *** And y = X.T
 
     Par: 3 lines
     Instructor: 2 lines (you can do it in one but it's wasteful compute-wise)
@@ -251,7 +267,10 @@ def t11(X):
        causing the square root to crash. Just take max(0, value) before the
        square root. Seems to occur on Macs.
     """
-    return None
+    # Square X in preparation for full equation
+    X_squared = np.sum(X**2, axis=1, keepdims=True)
+    Distance_squared = X_squared + X_squared.T - 2 * X @ X.T
+    return np.sqrt(np.maximum(Distance_squared, 0))
 
 
 def t12(X, Y):
@@ -270,7 +289,9 @@ def t12(X, Y):
 
     Hints: Similar to previous problem
     """
-    return None
+    X_squared = np.sum(X**2, axis=1, keepdims=True)
+    Y_squared = np.sum(Y**2, axis=1, keepdims=True)
+    return np.sqrt(np.maximum(X_squared + Y_squared - 2 * X @ Y.T, 0))
 
 
 def t13(q, V):
@@ -286,8 +307,15 @@ def t13(q, V):
     Instructor: 1 line
 
     Hint: np.argmax
+
+    *** Dimensions:
+        V.T (transpose of V) will have shape (M, N).
+        q @ V.T results in shape (1, N).
+
+        And we need (N,1) so do it like below
+        where (N,M) * (M, 1)
     """
-    return None
+    return np.argmax(V @ q.t)
 
 
 def t14(X, y):
@@ -303,8 +331,12 @@ def t14(X, y):
     Instructor: 1 line
 
     Hint: np.linalg.lstsq or np.linalg.solve
+
+    *** Finding the optimal weight vecor that minimizes the squared error
+        AKA a linear least squares problem and np.linalg.lstsq aka least squares
+    
     """
-    return None
+    return np.linalg.lstsq(X,y, rcond=None)[0]
 
 
 def t15(X, Y):
@@ -322,7 +354,7 @@ def t15(X, Y):
 
     Hint: np.cross
     """
-    return None
+    return np.cross(X,Y)
 
 
 def t16(X):
@@ -341,8 +373,12 @@ def t16(X):
     Hints:
     1) If it doesn't broadcast, reshape or np.expand_dims
     2) X[:, -1] gives the last column of X
+
+
+    *** expand_dims solution:  X[:, :-1] / np.expand_dims(X[:, -1], axis=1)
+    Probably best solution: X[:, :-1] / X[:, -1, np.newaxis]
     """
-    return None
+    return X[:, :-1] / X[:, -1].reshape(-1, 1)
 
 
 def t17(X):
@@ -359,8 +395,11 @@ def t17(X):
     Instructor: 1 line
 
     Hint: np.hstack, np.ones
+
+    *** hstack adds columns while vstack adds rows
     """
-    return None
+    # Basically just use np.ones of shape, X number of rows to create an array of size(1,M) with the value 1 and hstack it to X
+    return np.hstack((X, np.ones((X.shape[0], 1))))
 
 
 def t18(N, r, x, y):
@@ -384,7 +423,8 @@ def t18(N, r, x, y):
     it without them, but np.meshgrid and np.arange are easier to understand. 
     2) Arrays have an astype method
     """
-    return None
+    X, Y = np.meshgrid(np.arange(N), np.arange(N))
+    return (np.sqrt((X - x)**2 + (Y - y)**2) < r).astype(float)
 
 
 def t19(N, s, x, y):
@@ -402,7 +442,8 @@ def t19(N, s, x, y):
     Par: 3 lines
     Instructor: 2 lines
     """
-    return None
+    X, Y = np.meshgrid(np.arange(N), np.arange(N))
+    return np.exp(-((X - x)**2 + (Y - y)**2) / s**2)
 
 
 def t20(N, v):
@@ -423,5 +464,8 @@ def t20(N, v):
        abs(ax + by + c) / sqrt(a^2 + b^2)
        (The sign of the numerator tells which side the point is on)
     2) np.abs
+
+    *** 
     """
-    return None
+    X, Y = np.meshgrid(np.arange(N), np.arange(N))
+    return np.abs(v[0] * X + v[1] * Y + v[2]) / np.sqrt(v[0]**2 + v[1]**2)
