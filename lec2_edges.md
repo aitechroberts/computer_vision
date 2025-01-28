@@ -49,6 +49,10 @@ Seems like convolving with a gaussian at a really small scale
 
 HOGs is faster because you compute gradients once on whole image and compute histograms of gradient orientation once. Slide over according to "bin size"
 
+## Laplacians
+Laplacian of Gaussian (LOG)
+- Think of it as a blob detector
+
 
 
 
