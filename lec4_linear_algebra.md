@@ -90,7 +90,14 @@ Corollary 4: Least Squares
     - Faster to compute if A is an overdetermine system (A is tall and skinny)
 
 
+Think of it like a linear auto-encoder
+- Take the X number of SVD's to create a plane, then project the stuff from the image you want
+    - Just the dot product of the vector with the SVD plane
+    - Then project it back up z = u[:,:k].T * X
+    X hat (recreated image) = u_1 * Z_1 + u_2 * Z_2 = the Z from above
 
 
 
-    
+
+
+
