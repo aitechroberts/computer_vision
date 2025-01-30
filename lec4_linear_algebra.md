@@ -81,5 +81,16 @@ With all the left SVDs * SIGMA^2
 Corollary 2: Homogenous Least Squares
 - Apply the last column or the smallest Singular Vlaue
 
-Corollar 3: Pseudoinverse
-- 
+Corollary 3: Pseudoinverse
+- Used to take the end result and find what transformation took place to make that happen
+
+Corollary 4: Least Squares
+- X that solves the problem trying to minimize ||Ax-b||^2
+    - And fortunately (A.T * A)^(-1) * A.T
+    - Faster to compute if A is an overdetermine system (A is tall and skinny)
+
+
+
+
+
+    
