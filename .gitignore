@@ -3,3 +3,5 @@ HW2/carseq.npy
 HW2/girlseq.npy
 HW2/aerialseq.npy
 HW2/antseq.npy
+data/
+HW5/q3_weights.pickle
